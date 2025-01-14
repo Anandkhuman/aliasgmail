@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/281/281764.png" type="image/png">
+  
+  <title>Gmail Alias Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom right, #4facfe, #00f2fe);
+      color: #ffffff;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: #ffffff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+    .navbar button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+    }
+    .navbar img {
+      width: 28px;
+      height: 28px;
+      transition: transform 0.3s;
+    }
+    .navbar img:hover {
+      transform: scale(1.3);
+      
+    }
+    .navbar span {
+      display: block;
+      font-size: 0.75rem;
+      margin-top: 5px;
+    }
+    .app-container, section {
+      display: none;
+      margin-top: 90px;
+      width: 100vw;
+      max-width: 800px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px 25px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      margin: 80px auto;
+      
+    }
+    h1, h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+    label, p {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+    }
+    input:focus {
+      border-color: #00f2fe;
+    }
+    .generate-btn {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .generate-btn:hover {
+      background: linear-gradient(to right, #0575e6, #00f260);
+      transform: scale(1.05);
+    }
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      background: #ffffff;
+      border-radius: 10px;
+      color: #000000;
+      text-align: left;
+    }
+    .output p {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+    }
+    .output p span {
+      flex-grow: 1;
+    }
+    .output .copy-btn img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    border: none; /* Ensures no border is applied */
+    }
+    .output .copy-btn img:hover {
+    transform: scale(1.2);
+    }
+    
+    #about, #contact {
+      text-align: left;
+      color: #ffffff;
+    }
+    #about a, #contact a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    #about a:hover, #contact a:hover {
+      text-decoration: underline;
+    }
+    .loading-bar {
+      display: none;
+      height: 8px;
+      background: #ffffff;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+    .loading-bar span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      animation: loading 2s linear forwards;
+    }
+    @keyframes loading {
+      to {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <button onclick="showSection('home')">
+      <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home">
+      <span>Home</span>
+    </button>
+    <button onclick="showSection('about')">
+      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="About">
+      <span>About</span>
+    </button>
+    <button onclick="showSection('contact')">
+      <img src="https://cdn-icons-png.flaticon.com/512/159/159832.png" alt="Contact">
+      <span>Contact</span>
+    </button>
+  </div>
+
+  <div id="home" class="app-container">
+    <h1>Alias Generator</h1>
+    <p>Create Gmail aliases to your email address.</p>
+    <label for="baseGmail">Base Gmail:</label>
+    <input type="text" id="baseGmail" placeholder="Enter your Gmail (e.g., example@gmail.com)">
+    <label for="aliasName">Alias Name:</label>
+    <input type="text" id="aliasName" placeholder="Enter alias name (e.g., promo, work)">
+    <label for="aliasCount">How Many Aliases:</label>
+    <input type="number" id="aliasCount" min="1" placeholder="Enter number of aliases">
+    <button class="generate-btn" onclick="generateAliases()">Generate Gmail</button>
+    <div class="loading-bar" id="loadingBar"><span></span></div>
+    <div class="output" id="aliasOutput" style="display: none;">
+      <h2>Generated Gmail List</h2>
+      <p style="font-family: Arial, sans-serif; line-height: 1.5; margin: 10px 0; 
+      background-color: #f0fff0; 
+      border: 1px solid #ccc; 
+      padding: 10px; 
+      border-radius: 5px; 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      
+      An alias Gmail is an alternate email address that is associated with your primary Gmail account. It allows you to receive emails sent to the alias without creating a separate email account.
+      </p>
+      
+      <div id="aliases"></div>
+    </div>
+  </div>
+
+  <section id="about">
+    <h2>About</h2>
+    <p>This tool helps users create Gmail aliases to organize emails effectively. Use it for personal or professional purposes!</p>
+  </section>
+
+  <section id="contact">
+  <h2>Contact</h2>
+  <p><i class="fas fa-user icon"></i> Name: Anand Khuman</p>
+  <p><i class="fas fa-phone icon"></i> Phone: <a href="tel:+919366193440">9366193440</a></p>
+  <p><i class="fas fa-envelope icon"></i> Email us at: <a href="mailto:anand.laishram143@gmail.com">anand.laishram143@gmail.com</a></p>
+  <p><i class="fas fa-globe icon"></i> Visit our website: <a href="https://sinthahousie.com" target="_blank">sinthahousie.com</a></p>
+  </section>
+
+  <script>
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.app-container, section');
+      sections.forEach(section => {
+        section.style.display = section.id === sectionId ? 'block' : 'none';
+      });
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert(`Copied: ${text}`);
+      });
+    }
+
+    function generateAliases() {
+      const baseGmail = document.getElementById('baseGmail').value.trim();
+      const aliasName = document.getElementById('aliasName').value.trim();
+      const aliasCount = parseInt(document.getElementById('aliasCount').value);
+      const aliasesContainer = document.getElementById('aliases');
+      const loadingBar = document.getElementById('loadingBar');
+      const aliasOutput = document.getElementById('aliasOutput');
+
+      if (!baseGmail.includes('@gmail.com') || isNaN(aliasCount) || aliasCount < 1) {
+        alert("Please enter a valid Gmail and alias count.");
+        return;
+      }
+
+      aliasesContainer.innerHTML = "";
+      aliasOutput.style.display = 'none';
+      loadingBar.style.display = 'block';
+
+      setTimeout(() => {
+        loadingBar.style.display = 'none';
+        aliasOutput.style.display = 'block';
+
+        for (let i = 1; i <= aliasCount; i++) {
+          const alias = `${baseGmail.split('@')[0]}+${aliasName}${i}@gmail.com`;
+          const aliasElement = document.createElement('p');
+          aliasElement.innerHTML = `
+            <span>${alias}</span>
+            <button class="copy-btn" onclick="copyToClipboard('${alias}')">
+              <img src="https://github.com/Anandkhuman/Photo/raw/main/copy.png" alt="Copy">
+            </button>
+          `;
+          aliasesContainer.appendChild(aliasElement);
+        }
+      }, 2000);
+    }
+
+    // Default to show the home section on load
+    document.addEventListener("DOMContentLoaded", () => showSection('home'));
+  </script>
+</body>
+</html>
